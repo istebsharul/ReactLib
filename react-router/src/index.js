@@ -1,45 +1,35 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom';
 import './index.css';
-import App from './App';
+import App from './App'; //Removing This will cause disconnecting to CSS
 import reportWebVitals from './reportWebVitals';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Home from './components/Home/Home';
 import AboutUs from './components/About/about';
 import Layout from './layout';
 import Contact from './components/contact/contact';
+import Github, { githubInfoLoader } from './components/Github/github';
+const root = createRoot(document.getElementById('root'));
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path='/' element={<Layout />}>
+      <Route path='' element={<Home />} />
+      <Route path='about' element={<AboutUs />} />
+      <Route path='contact' element={<Contact />} />
+      {/* <Route path='user/:userid' element={<User />} /> */}
+      <Route
+        loader={githubInfoLoader}
+        path='github'
+        element={<Github />}
+      />
+    </Route>
+  )
+)
 
-const routes = createBrowserRouter([
-  {
-    path: '/',
-    element: <Layout />,
-    children: [
-      {
-        path: '',
-        element: <Home />
-      },
-      {
-        path: 'about',
-        element: <AboutUs />
-      },
-      {
-        path: 'contact',
-        element: <Contact />
-      },
-    ]
-  }
-])
-
-root.render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {/* <App /> */}
-    <RouterProvider router={routes} />
-  </React.StrictMode>
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+    <RouterProvider router={router} />
+  </React.StrictMode>,
+)
